@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Universal File Compressor</title>
+
+<style>
+
+body{
+font-family: Arial;
+background: linear-gradient(135deg,#4facfe,#00f2fe);
+margin:0;
+padding:0;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:12px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:center;
+width:400px;
+}
+
+h1{
+color:#333;
+}
+
+input{
+margin-top:20px;
+}
+
+button{
+margin-top:20px;
+padding:10px 20px;
+border:none;
+background:#4facfe;
+color:white;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#007bff;
+}
+
+.result{
+margin-top:20px;
+font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>File Compressor Tool</h1>
+
+<p>Select File</p>
+
+<input type="file" id="fileInput">
+
+<br>
+
+<label>Compression Level</label>
+
+<input type="range" min="10" max="90" value="50" id="quality">
+
+<br>
+
+<button onclick="compressFile()">Compress File</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<script>
+
+function compressFile(){
+
+let file=document.getElementById("fileInput").files[0];
+
+if(!file){
+alert("Please select file");
+return;
+}
+
+let quality=document.getElementById("quality").value/100;
+
+let reader=new FileReader();
+
+reader.onload=function(e){
+
+let img=new Image();
+
+img.src=e.target.result;
+
+img.onload=function(){
+
+let canvas=document.createElement("canvas");
+
+let ctx=canvas.getContext("2d");
+
+canvas.width=img.width;
+
+canvas.height=img.height;
+
+ctx.drawImage(img,0,0);
+
+canvas.toBlob(function(blob){
+
+let newSize=(blob.size/1024).toFixed(2);
+
+let oldSize=(file.size/1024).toFixed(2);
+
+document.getElementById("result").innerHTML=
+
+"Old Size: "+oldSize+" KB <br> New Size: "+newSize+" KB";
+
+let link=document.createElement("a");
+
+link.href=URL.createObjectURL(blob);
+
+link.download="compressed-image.jpg";
+
+link.click();
+
+},"image/jpeg",quality);
+
+}
+
+}
+
+reader.readAsDataURL(file);
+
+}
+
+</script>
+
+</body>
+</html>
